@@ -41,12 +41,16 @@ where ( exists ( select pci.id
 
   public void runSync(String remotekb_id) {
     log.debug("KnowledgeBaseCacheService::runSync(${remotekb_id})");
-    RemoteKB rkb = RemoteKB.read(remotekb_id) 
-    if ( rkb ) {
-      log.debug("Run remote kb sync:: ${rkb.id}/${rkb.name}/${rkb.uri}");
-      Class cls = Class.forName(rkb.type)
-      KBCacheUpdater cache_updater = cls.newInstance();
-      cache_updater.freshenPackageData(rkb.name, rkb.uri, rkb.cursor, this)
+    // Even though we just need a read-only connection, we still need to wrap this block
+    // with withNewTransaction because of https://hibernate.atlassian.net/browse/HHH-7421
+    RemoteKB.withNewTransaction {
+      RemoteKB rkb = RemoteKB.read(remotekb_id) 
+      if ( rkb ) {
+        log.debug("Run remote kb sync:: ${rkb.id}/${rkb.name}/${rkb.uri}");
+        Class cls = Class.forName(rkb.type)
+        KBCacheUpdater cache_updater = cls.newInstance();
+        cache_updater.freshenPackageData(rkb.name, rkb.uri, rkb.cursor, this)
+      }
     }
   }
 

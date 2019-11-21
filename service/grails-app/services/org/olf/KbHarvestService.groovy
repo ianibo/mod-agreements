@@ -126,8 +126,8 @@ where rkb.type is not null
         finally {
           // Finally, set the state to idle
           RemoteKB.withNewTransaction {
-            RemoteKB rkb = RemoteKB.get(remotekb_id);
-            rkb.lock()
+            RemoteKB rkb = RemoteKB.lock(remotekb_id);
+            
             rkb.syncStatus = 'idle'
             rkb.lastCheck = System.currentTimeMillis();
             rkb.save(flush:true, failOnError:true)
