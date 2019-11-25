@@ -106,7 +106,7 @@ where rkb.type is not null
         // Now that we hold the lock, we can checm again to see if it's in-process
         if ( rkb.syncStatus != 'in-process' ) {
           // Set it to in-process, and continue
-]        log.debug('Set RemoteKB sync-status')
+          log.debug('Set RemoteKB sync-status')
           rkb.syncStatus = 'in-process';
           continue_processing = true;
         }
@@ -130,7 +130,9 @@ where rkb.type is not null
         finally {
           // Finally, set the state to idle
           RemoteKB.withNewTransaction {
+            log.debug('Lock RemoteKB second time')
             RemoteKB rkb = RemoteKB.lock(remotekb_id);
+            log.debug('Locked!')
 
             rkb.syncStatus = 'idle'
             rkb.lastCheck = System.currentTimeMillis();
