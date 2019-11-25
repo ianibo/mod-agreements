@@ -21,21 +21,21 @@ import groovy.util.logging.Slf4j
  * See http://guides.grails.org/grails-scheduled/guide/index.html for info on this way of
  * scheduling tasks
  */
-@Slf4j 
+@Slf4j
 @CompileStatic
 class KbHarvestService {
 
-  // Without this, the service will be lazy initialised, and the tasks won't be scheduled until an external 
+  // Without this, the service will be lazy initialised, and the tasks won't be scheduled until an external
   // tries to access the instance.
-  boolean lazyInit = false 
+  boolean lazyInit = false
 
   OkapiTenantAdminService okapiTenantAdminService
   KnowledgeBaseCacheService knowledgeBaseCacheService
-  
+
   // All remote KBs not currently syncing and which have not been synced in the last 1 hour
-  private static final PENDING_JOBS_HQL = '''select rkb.id 
-from RemoteKB as rkb 
-where rkb.type is not null 
+  private static final PENDING_JOBS_HQL = '''select rkb.id
+from RemoteKB as rkb
+where rkb.type is not null
   and rkb.active = :true
   and ( ( rkb.syncStatus is null ) OR ( rkb.syncStatus <> :inprocess ) )
   and ( ( rkb.lastCheck is null ) OR ( ( :current_time - rkb.lastCheck ) < 1*60*60*1000 ) )
@@ -47,23 +47,23 @@ where rkb.type is not null
     final String schemaName = OkapiTenantResolver.getTenantSchemaName(tenantId)
     triggerUpdateForTenant(schemaName)
   }
-  
+
 //  @Subscriber('okapi:tenant_enabled')
 //  public void onTenantEnabled (final String tenant_id) {
 //    log.debug "Perform trigger sync for new tenant ${tenant_id} via new tenant event"
 //    final String schemaName = OkapiTenantResolver.getTenantSchemaName(tenant_id)
 //    triggerUpdateForTenant(schemaName)
 //  }
-  
+
   @CompileStatic(SKIP)
   private void triggerUpdateForTenant(final String tenant_schema_id) {
     Tenants.withId(tenant_schema_id) {
-      
+
       PackageIngestJob job = PackageIngestJob.findByStatusInList([
         PackageIngestJob.lookupStatus('Queued'),
         PackageIngestJob.lookupStatus('In progress')
       ])
-      
+
       if (!job) {
         job = new PackageIngestJob(name: "Scheduled Ingest Job ${Instant.now()}")
         job.setStatusFromString('Queued')
@@ -84,11 +84,11 @@ where rkb.type is not null
       triggerUpdateForTenant(tenant_schema_id as String)
     }
   }
-  
+
   @CompileStatic(SKIP)
   public void triggerCacheUpdate() {
     log.debug("KBHarvestService::triggerCacheUpdate()");
-    
+
     // List all pending jobs that are eligible for processing - That is everything enabled and not currently in-process and has not been processed in the last hour
     RemoteKB.executeQuery(PENDING_JOBS_HQL,['true':true,'inprocess':'in-process','current_time':System.currentTimeMillis()],[lock:false]).each { remotekb_id ->
 
@@ -100,8 +100,7 @@ where rkb.type is not null
       RemoteKB.withNewTransaction {
 
         // Get hold of the actual job, lock it, and if it's still not in process, set it's status to in-process
-        RemoteKB rkb = RemoteKB.get(remotekb_id);
-        rkb.lock()
+        RemoteKB rkb = RemoteKB.lock(remotekb_id);
 
         // Now that we hold the lock, we can checm again to see if it's in-process
         if ( rkb.syncStatus != 'in-process' ) {
@@ -109,7 +108,7 @@ where rkb.type is not null
           rkb.syncStatus = 'in-process';
           continue_processing = true;
         }
-     
+
         // Save and close the transaction, removing the lock
         rkb.save(flush:true, failOnError:true);
       }
@@ -127,7 +126,7 @@ where rkb.type is not null
           // Finally, set the state to idle
           RemoteKB.withNewTransaction {
             RemoteKB rkb = RemoteKB.lock(remotekb_id);
-            
+
             rkb.syncStatus = 'idle'
             rkb.lastCheck = System.currentTimeMillis();
             rkb.save(flush:true, failOnError:true)
@@ -141,7 +140,7 @@ where rkb.type is not null
 
 
   // @CompileDynamic
-  // Date startAtDate() { 
+  // Date startAtDate() {
   //   Date startAt = new Date()
   //   use(TimeCategory) {
   //     startAt = startAt + 1.minute
@@ -150,6 +149,6 @@ where rkb.type is not null
   // }
 
   // void scheduleFollowupEmail(String email, String message) {
-    // threadPoolTaskScheduler.schedule(new EmailTask(emailService, email, message), startAtDate()) 
+    // threadPoolTaskScheduler.schedule(new EmailTask(emailService, email, message), startAtDate())
   // }
 }
