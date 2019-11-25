@@ -99,16 +99,19 @@ where rkb.type is not null
       // Lock the actual RemoteKB record so that nobody else can grab it for processing
       RemoteKB.withNewTransaction {
 
+        log.debug('Lock RemoteKB first time')
         // Get hold of the actual job, lock it, and if it's still not in process, set it's status to in-process
         RemoteKB rkb = RemoteKB.lock(remotekb_id);
 
         // Now that we hold the lock, we can checm again to see if it's in-process
         if ( rkb.syncStatus != 'in-process' ) {
           // Set it to in-process, and continue
+]        log.debug('Set RemoteKB sync-status')
           rkb.syncStatus = 'in-process';
           continue_processing = true;
         }
 
+        log.debug('Save RemoteKB')
         // Save and close the transaction, removing the lock
         rkb.save(flush:true, failOnError:true);
       }
@@ -117,7 +120,9 @@ where rkb.type is not null
       if ( continue_processing ) {
         log.debug("Run sync on ${remotekb_id}");
         try {
-          knowledgeBaseCacheService.runSync((String)remotekb_id);
+          RemoteKB.withNewTransaction {
+            knowledgeBaseCacheService.runSync((String)remotekb_id);
+          }
         }
         catch ( Exception e ) {
           log.warn("problem processing remote KB link",e);
