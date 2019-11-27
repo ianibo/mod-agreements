@@ -1,6 +1,6 @@
 package org.olf.general.jobs
 import java.time.Instant
-import org.olf.general.SingleFileAttachment
+import com.k_int.web.toolkit.files.SingleFileAttachment
 import com.k_int.web.toolkit.refdata.CategoryId
 import com.k_int.web.toolkit.refdata.Defaults
 import com.k_int.web.toolkit.refdata.RefdataValue
@@ -35,6 +35,7 @@ abstract class PersistentJob extends SingleFileAttachment implements EventBusAwa
   
   static mapping = {
 //    tablePerHierarchy false
+                      version false
                  name column:'job_name'
                status column:'job_status_fk'
           dateCreated column:'job_date_created'

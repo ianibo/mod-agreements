@@ -7,7 +7,6 @@ import spock.util.concurrent.PollingConditions
 
 abstract class BaseSpec extends HttpSpec {
   def setupSpec() {
-    OkapiHeaders f
     httpClientConfig = {
       client.clientCustomizer { HttpURLConnection conn ->
         conn.connectTimeout = 2000
@@ -18,7 +17,15 @@ abstract class BaseSpec extends HttpSpec {
       (OkapiHeaders.TENANT): 'http_tests',
       (OkapiHeaders.USER_ID): 'http_test_user'
     )
-  }  
+  }
+  
+  Map<String, String> getAllHeaders() {
+    specDefaultHeaders + headersOverride
+  }
+  
+  String getCurrentTenant() {
+    allHeaders?.get(OkapiHeaders.TENANT)
+  }
 
   void 'Ensure test tenant' () {
 

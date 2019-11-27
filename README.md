@@ -54,7 +54,7 @@ This is the main starter repository for the Grails-based OLF - ERM backend modul
 
 ### Issue tracker
 
-See project [MODERM](https://issues.folio.org/browse/MODERM)
+See project [ERM](https://issues.folio.org/projects/ERM)
 at the [FOLIO issue tracker](https://dev.folio.org/guidelines/issue-tracker/).
 
 ### Other documentation

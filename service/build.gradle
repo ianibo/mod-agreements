@@ -127,8 +127,8 @@ dependencies {
 
 // Changed this to enable inline development of the includes listed below.
 def includes = [
-  'web-toolkit-ce'   : 'com.k_int.grails:web-toolkit-ce:3.7.1',
-  'grails-okapi'  : 'com.k_int.okapi:grails-okapi:3.6.15'
+  'web-toolkit-ce'   : 'com.k_int.grails:web-toolkit-ce:3.8.1',
+  'grails-okapi'  : 'com.k_int.okapi:grails-okapi:3.6.17'
 ]
 
 bootRun {

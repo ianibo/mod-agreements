@@ -599,7 +599,7 @@ class SubscriptionAgreementController extends OkapiTenantAwareController<Subscri
   def export () {
     final String subscriptionAgreementId = params.get("subscriptionAgreementId")
     if (subscriptionAgreementId) {
-      respond exportService.agreement(subscriptionAgreementId, params.boolean("current") ?: false)
+      respond exportService.agreement(subscriptionAgreementId, params.boolean("currentOnly") ?: false)
       return
     }
     respond ([statusCode: 404])

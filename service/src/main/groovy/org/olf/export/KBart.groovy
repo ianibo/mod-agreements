@@ -247,18 +247,16 @@ public class KBart implements Serializable {
         // get coverage statements. if there is more than one we need to clone the kbart object, one for
         // each coverage statement
         boolean hasCustomCoverage = false
-        Set<CoverageStatement> coverages = null
         Map customCoverageMap = req?.getAttribute("export.kbart.customCoverage") as Map
         // log.debug("DEBUG: customCoverageMap size: "+ customCoverageMap.size())
 
         // Check for custom coverage on this resource.
-        List customCoverageList = customCoverageMap?.get("${res.id}")
-        if (customCoverageList) {
+        List<CoverageStatement> coverages = customCoverageMap?.get("${res.id}")
+        if (coverages) {
           hasCustomCoverage = true
           log.debug("DEBUG: hasCustomCoverage = true")
-          coverages =  customCoverageList
         } else {
-          coverages = ti.coverage
+          coverages = pci.coverage
         }
         // log.debug("coverage size: "+ coverages.size())
         // add one kbart object for each coverage to list

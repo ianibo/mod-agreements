@@ -21,10 +21,20 @@ spring:
             check-template-location: false
 
 # Spring Actuator Endpoints are Disabled by Default
+management:
+  context-path: '/admin'
+
 endpoints:
     enabled: false
     jmx:
-        enabled: true
+      exposure:
+        exclude: "*"
+    web:
+      exposure:
+        include:
+          - health
+    health:
+      enabled: true
 
 ---
 grails:
@@ -64,8 +74,8 @@ grails:
     controllers:
         defaultScope: singleton
         upload:
-            maxFileSize: 10485760
-            maxRequestSize: 10485760
+            maxFileSize: 209715200
+            maxRequestSize: 220200960
     converters:
         encoding: UTF-8
         
@@ -206,8 +216,8 @@ environments:
 
         register: true
         deploy: true
----
+
 # Set useModVendors to true if you are running in a full FOLIO stack and wish to coordinate
 # Agreement vendors (And anywhere else we link to vendors) with records in mod-vendors
-useModVendors: false
-createMissingVendors: false
+# useModVendors: false
+# createMissingVendors: false

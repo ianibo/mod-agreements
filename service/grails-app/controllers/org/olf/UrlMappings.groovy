@@ -1,7 +1,5 @@
 package org.olf
 
-import org.olf.general.FileUpload
-
 class UrlMappings {
 
   static mappings = {
@@ -27,7 +25,7 @@ class UrlMappings {
       
       "/export"          (action: 'export', method: 'GET')
       "/export/current"  (action: 'export', method: 'GET') {
-        current = true
+        currentOnly = true
       }
 	  
       '/clone' (controller: 'subscriptionAgreement', action: 'doClone', method: 'POST')
@@ -132,12 +130,12 @@ class UrlMappings {
       "/entitlements" ( action:'entitlements', method: 'GET' )
     }
 
- 
-    get "/erm/files/$id/raw"(controller: "fileUpload", action: "getFileUploadRaw")
-    get "/erm/files/$id"(controller: "fileUpload", action: "getFileUpload")
-    get '/erm/files'(controller: "fileUpload", action: "getFileUploadList")
-    post '/erm/files'(controller: "fileUpload", action: "postFileUploadRaw")
-    delete "/erm/files/$id"(controller: "fileUpload", action: "deleteFileUpload")
+    "/erm/files" ( resources:'fileUpload', excludes: ['update', 'patch', 'save', 'edit', 'create']) {
+      collection {
+        '/' (controller: "fileUpload", action: "uploadFile", method: 'POST')
+      }
+      "/raw" ( controller: "fileUpload", action: "downloadFile", method: 'GET' )
+    }
 
     
     // export endpoints
