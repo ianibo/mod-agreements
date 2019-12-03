@@ -256,7 +256,7 @@ public class KBart implements Serializable {
           hasCustomCoverage = true
           log.debug("DEBUG: hasCustomCoverage = true")
         } else {
-          coverages = pci.coverage
+          coverages = pci.coverage as List
         }
         // log.debug("coverage size: "+ coverages.size())
         // add one kbart object for each coverage to list
