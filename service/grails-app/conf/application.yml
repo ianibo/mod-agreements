@@ -53,13 +53,13 @@ grails:
         types:
             json:
               - application/json
-              - text/json   
+              - text/json
             hal:
               - application/hal+json
-              - application/hal+xml  
+              - application/hal+xml
             xml:
               - text/xml
-              - application/xml                                 
+              - application/xml
             atom: application/atom+xml
             css: text/css
             csv: text/csv
@@ -78,7 +78,7 @@ grails:
             maxRequestSize: 220200960
     converters:
         encoding: UTF-8
-        
+
     gorm:
         reactor:
             # Whether to translate GORM events into Reactor events
@@ -87,12 +87,12 @@ grails:
         multiTenancy:
             mode: SCHEMA
             tenantResolverClass: com.k_int.okapi.OkapiTenantResolver    # See src/main/groovy
-            
+
     plugin:
       springsecurity:
         providerNames:
           - 'okapiAuthenticationProvider'
-          
+
         controllerAnnotations:
           staticRules:
             -
@@ -101,7 +101,7 @@ grails:
                 - 'permitAll' # SHould maybe lock this down to the Super tenant once it is properly enforced?
             -
               pattern: '/application/**'
-              access: 
+              access:
                 - 'permitAll'
             -
               pattern: '/**'
@@ -109,7 +109,7 @@ grails:
                 - 'permitAll'
         filterChain:
           chainMap:
-            - 
+            -
               pattern: '/**'
               filters: 'JOINED_FILTERS,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter,-basicAuthenticationFilter'
     databinding:
@@ -121,7 +121,7 @@ grails:
           - "yyyy-MM-dd'T'HH:mm:ss"
           - "yyyy-MM-dd'T'HH:mm:ss.SSS"
           - 'yyyy-MM-dd'
-          
+
     views:
         json:
             generator:
@@ -146,7 +146,7 @@ dataSource:
   dialect: com.k_int.hibernate.dialects.postgres.KIPostgres94Dialect
   url: "jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.database:olfdev}"
   schemaHandler: com.k_int.okapi.OkapiSchemaHandler
-  
+
   properties:
     initialSize: 5
     maxActive: ${db.maxpoolsize:50}
@@ -166,7 +166,7 @@ dataSource:
     abandonWhenPercentageFull: 50
     jdbcInterceptors: ConnectionState
     defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
-    
+
 okapi:
   linkListener:
     allowedControllerActions:
@@ -176,25 +176,26 @@ okapi:
         - save
         - create
         - publicLookup
-      
+        - export
+
   schema:
     appName: 'mod-agreements'
   service:
     register: false
     deploy: false
-  
-  
+
+
 environments:
   test:
     dataSource:
       url: "jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.database:olftest}"
-      
+
   dbGen:
     grails:
       gorm:
         multiTenancy:
           mode: SCHEMA
-          tenantResolverClass: org.grails.datastore.mapping.multitenancy.resolvers.SystemPropertyTenantResolver # System prop of gorm.tenantId 
+          tenantResolverClass: org.grails.datastore.mapping.multitenancy.resolvers.SystemPropertyTenantResolver # System prop of gorm.tenantId
       plugin:
         databasemigration:
           changelogFileName: module-tenant-changelog.groovy
@@ -204,7 +205,7 @@ environments:
   production:
     dataSource:
       url: "jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.database:olf}"
-        
+
   development:
     # This is only used when the there is no request from okapi coming to the module or a none-okapi request.
     # OKAPI supplies information about how to reach it to the modules. These options are used for self reg and other calls
