@@ -3,6 +3,9 @@ psql -U folio_admin -h localhost okapi_modules
 
 set search_path to diku_mod_agreements, public;
 
+# Dump schema only
+pg_dump --schema-only -U folio_admin -h localhost -n diku_mod_agreements okapi_modules
+
 select * from diku_olf_erm.title_instance where ti_title like 'cancer%';
 
 
