@@ -241,17 +241,17 @@ class PackageIngestService {
               pci.save(flush:true, failOnError:true)
             }
             else {
-              String message = "Skipping ${pc.title}. Unable to identify platform from ${platform_url_to_use} and ${pc.platformName}"
+              String message = "Skipping ${pc.title}/${pc}. Unable to identify platform from ${platform_url_to_use} and ${pc.platformName}"
               log.error(message)
             }
           }
           else {
-            String message = "Skipping ${pc.title}. Unable to resolve title from ${pc.title} with identifiers ${pc.instanceIdentifiers}"
+            String message = "Skipping ${pc.title}/${pc}. Unable to resolve title from ${pc.title} with identifiers ${pc.instanceIdentifiers}"
             log.error(message)
           }
         }
       } catch ( Exception e ) {
-        String message = "Skipping ${pc.title}. System error: ${e.message}"
+        String message = "Skipping ${pc.title}/${pc}, System error: ${e.message}"
         log.error(message,e)
       }
 
